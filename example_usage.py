@@ -13,8 +13,8 @@ from datetime import datetime
 # Add the project root to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from publish_socials import Publisher
 from config import Config
+from publish_socials import Publisher
 
 
 def create_sample_content():
@@ -48,7 +48,7 @@ In today's digital age, content creators face the challenge of reaching audience
         "publish_date": datetime.now().isoformat(),
         "author": "Your Name",
         "summary": "Exploring the importance of multi-platform content publishing in the digital age.",
-        "excerpt": "Learn why content creators should embrace multi-platform publishing to reach broader audiences and maximize engagement."
+        "excerpt": "Learn why content creators should embrace multi-platform publishing to reach broader audiences and maximize engagement.",
     }
 
 
@@ -73,7 +73,7 @@ def main():
     """Main function to demonstrate Publisher usage."""
     print("🚀 Publisher Example Usage")
     print("=" * 50)
-    
+
     # Initialize publisher
     print("1. Initializing Publisher...")
     try:
@@ -82,80 +82,79 @@ def main():
     except Exception as e:
         print(f"✗ Failed to initialize Publisher: {e}")
         return
-    
+
     # Test platform connections
     print("\n2. Testing platform connections...")
     try:
         connection_results = publisher.test_all_connections()
-        
+
         for platform, result in connection_results.items():
-            if result['success']:
+            if result["success"]:
                 print(f"✓ {platform.capitalize()}: Connected")
             else:
                 print(f"✗ {platform.capitalize()}: {result['error']}")
     except Exception as e:
         print(f"✗ Failed to test connections: {e}")
-    
+
     # Create sample content
     print("\n3. Creating sample content...")
     content = create_sample_content()
     print(f"✓ Content created: '{content['title']}'")
-    
+
     # Publish to all platforms
     print("\n4. Publishing to all platforms...")
     try:
         results = publisher.publish_to_all(content)
-        
+
         print("\n📊 Publishing Results:")
         print("-" * 30)
-        
+
         for platform, result in results.items():
-            if result['success']:
+            if result["success"]:
                 print(f"✓ {platform.capitalize()}: Published successfully")
                 print(f"  URL: {result['result'].get('url', 'N/A')}")
             else:
                 print(f"✗ {platform.capitalize()}: {result['error']}")
             print()
-            
+
     except Exception as e:
         print(f"✗ Failed to publish: {e}")
-    
+
     # Example: Publish with template
     print("5. Publishing with template...")
     try:
         template = create_template()
         template_results = publisher.publish_with_template(
-            content, 
-            template, 
-            platforms=['x', 'medium']  # Only publish to X and Medium with template
+            content,
+            template,
+            platforms=["x", "medium"],  # Only publish to X and Medium with template
         )
-        
+
         print("\n📊 Template Publishing Results:")
         print("-" * 35)
-        
+
         for platform, result in template_results.items():
-            if result['success']:
+            if result["success"]:
                 print(f"✓ {platform.capitalize()}: Published with template")
             else:
                 print(f"✗ {platform.capitalize()}: {result['error']}")
-                
+
     except Exception as e:
         print(f"✗ Failed to publish with template: {e}")
-    
+
     # Example: Publish to specific platforms
     print("\n6. Publishing to specific platforms...")
     try:
         # Publish only to Reddit
         reddit_result = publisher.publish_to_reddit(
-            content, 
-            subreddit="test"  # Replace with actual subreddit
+            content, subreddit="test"  # Replace with actual subreddit
         )
         print(f"✓ Reddit: Published to r/299labs")
         print(f"  URL: {reddit_result.get('url', 'N/A')}")
-        
+
     except Exception as e:
         print(f"✗ Reddit publishing failed: {e}")
-    
+
     print("\n" + "=" * 50)
     print("🎉 Example usage completed!")
     print("\n💡 Next Steps:")
@@ -169,18 +168,18 @@ def setup_environment():
     """Set up the environment for the example."""
     print("🔧 Environment Setup")
     print("=" * 30)
-    
+
     # Check if .env file exists
-    if not os.path.exists('.env'):
+    if not os.path.exists(".env"):
         print("⚠️  No .env file found. Creating template...")
-        
+
         # Create environment template
-        Config.create_env_template('.env.example')
+        Config.create_env_template(".env.example")
         print("✓ Created .env.example file")
         print("📝 Please copy .env.example to .env and fill in your API credentials")
-        
+
         # Create a basic .env file with placeholders
-        with open('.env', 'w') as f:
+        with open(".env", "w") as f:
             f.write("# Example .env file\n")
             f.write("# Copy this to .env and fill in your actual credentials\n\n")
             f.write("# X (Twitter) API\n")
@@ -207,11 +206,11 @@ def setup_environment():
             f.write("LINKEDIN_PROFILE_URN=your_linkedin_profile_urn\n")
             f.write("LINKEDIN_CLIENT_ID=your_linkedin_client_id\n")
             f.write("LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret\n")
-        
+
         print("✓ Created basic .env file with placeholders")
     else:
         print("✓ .env file already exists")
-    
+
     print("\n📋 Required Dependencies:")
     print("- requests>=2.31.0")
     print("- python-dotenv>=1.0.0")
@@ -222,8 +221,8 @@ def setup_environment():
 if __name__ == "__main__":
     # Setup environment first
     setup_environment()
-    
+
     print("\n" + "=" * 60)
-    
+
     # Run main example
     main()
