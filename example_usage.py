@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Example usage of the Publisher application.
+Example usage of the Publish-Socials application.
 
-This script demonstrates how to use the Publisher to publish articles
+This script demonstrates how to use the Publish-Socials to publish content
 across multiple platforms: X (Twitter), Reddit, Medium, Substack, and LinkedIn.
 """
 
@@ -13,16 +13,16 @@ from datetime import datetime
 # Add the project root to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from publisher import Publisher
+from publish_socials import Publisher
 from config import Config
 
 
-def create_sample_article():
-    """Create a sample article for demonstration."""
+def create_sample_content():
+    """Create a sample content for demonstration."""
     return {
-        "title": "My First Multi-Platform Article",
+        "title": "My First Multi-Platform Post",
         "content": """
-# The Future of Content Publishing
+# The Future of Social Media Content
 
 In today's digital age, content creators face the challenge of reaching audiences across multiple platforms. Each platform has its own unique audience, formatting requirements, and engagement patterns.
 
@@ -42,7 +42,7 @@ In today's digital age, content creators face the challenge of reaching audience
 
 ---
 
-*This article was published using the Publisher tool to demonstrate multi-platform content distribution.*
+*This content was published using the Publish-Socials tool to demonstrate multi-platform content distribution.*
         """,
         "tags": ["content-creation", "digital-marketing", "social-media", "publishing"],
         "publish_date": datetime.now().isoformat(),
@@ -53,7 +53,7 @@ In today's digital age, content creators face the challenge of reaching audience
 
 
 def create_template():
-    """Create a template for formatting articles."""
+    """Create a template for formatting content."""
     return """
 # {title}
 
@@ -65,7 +65,7 @@ def create_template():
 
 ---
 
-*This article was published using the Publisher tool.*
+*This content was published using the Publish-Socials tool.*
 """
 
 
@@ -96,15 +96,15 @@ def main():
     except Exception as e:
         print(f"✗ Failed to test connections: {e}")
     
-    # Create sample article
-    print("\n3. Creating sample article...")
-    article = create_sample_article()
-    print(f"✓ Article created: '{article['title']}'")
+    # Create sample content
+    print("\n3. Creating sample content...")
+    content = create_sample_content()
+    print(f"✓ Content created: '{content['title']}'")
     
     # Publish to all platforms
     print("\n4. Publishing to all platforms...")
     try:
-        results = publisher.publish_to_all(article)
+        results = publisher.publish_to_all(content)
         
         print("\n📊 Publishing Results:")
         print("-" * 30)
@@ -125,7 +125,7 @@ def main():
     try:
         template = create_template()
         template_results = publisher.publish_with_template(
-            article, 
+            content, 
             template, 
             platforms=['x', 'medium']  # Only publish to X and Medium with template
         )
@@ -147,10 +147,10 @@ def main():
     try:
         # Publish only to Reddit
         reddit_result = publisher.publish_to_reddit(
-            article, 
+            content, 
             subreddit="test"  # Replace with actual subreddit
         )
-        print(f"✓ Reddit: Published to r/test")
+        print(f"✓ Reddit: Published to r/299labs")
         print(f"  URL: {reddit_result.get('url', 'N/A')}")
         
     except Exception as e:
@@ -161,7 +161,7 @@ def main():
     print("\n💡 Next Steps:")
     print("1. Create a .env file with your API credentials")
     print("2. Configure the platforms you want to use")
-    print("3. Customize the article content and templates")
+    print("3. Customize the content and templates")
     print("4. Run this script again to see actual publishing")
 
 

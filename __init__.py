@@ -1,11 +1,11 @@
 """
-Publisher - Multi-platform article publishing tool.
+Publish-Socials - Multi-platform social media publishing tool.
 
-This package provides functionality to publish articles across multiple platforms
+This package provides functionality to publish content across multiple platforms
 including X (Twitter), Reddit, Medium, Substack, and LinkedIn.
 """
 
-from .publisher import Publisher
+from .publish_socials import Publisher
 from .config import Config
 from .errors import (
     PublishingError,
@@ -27,8 +27,8 @@ from .errors import (
 from .utils import ContentFormatter, validate_article, sanitize_filename, generate_slug
 
 __version__ = "1.0.0"
-__author__ = "299-Labs"
-__description__ = "Multi-platform article publishing tool"
+__author__ = "299labs"
+__description__ = "Multi-platform social media publishing tool"
 
 # Expose main classes and functions
 __all__ = [

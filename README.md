@@ -1,36 +1,62 @@
-# Publisher
+# Publish-Socials
 
-A multi-platform article publishing tool that allows you to publish articles across X (Twitter), Reddit, Medium, Substack, and LinkedIn from a single interface.
+A multi-platform social media publishing tool that allows you to publish content across X (Twitter), Reddit, Medium, Substack, and LinkedIn from a single interface.
 
 ## Features
 
-- **Multi-Platform Publishing**: Publish articles to multiple platforms simultaneously
+- **Multi-Platform Publishing**: Publish content to multiple platforms simultaneously
 - **Template Support**: Use markdown templates for consistent formatting
 - **API Integration**: Connect to platform APIs with secure configuration
 - **Batch Publishing**: Publish to multiple platforms with a single command
-- **Content Management**: Manage and track published articles
+- **Content Management**: Manage and track published content
+- **Smart Formatting**: Automatically adapt content for each platform's requirements
 
 ## Supported Platforms
 
-- **X (Twitter)**: Publish articles and threads
+- **X (Twitter)**: Publish tweets and threads
 - **Reddit**: Post to subreddits with proper formatting
 - **Medium**: Publish articles with metadata
 - **Substack**: Create and publish newsletters
-- **LinkedIn**: Share articles on professional network
+- **LinkedIn**: Share posts on professional network
 
 ## Installation
 
-1. Clone this repository
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   pip install -r requirements.txt
-   ```
+### PyPI Installation (Recommended)
+```bash
+pip install Publish-Socials
+```
+
+### Development Installation
+```bash
+# Clone the repository
+git clone https://github.com/299-Labs/Publish-Socials.git
+cd Publish-Socials
+
+# Install in development mode
+pip install -e .
+
+# Install development dependencies
+pip install -r requirements.txt
+```
+
+### Publishing to PyPI
+
+This project uses OpenID Connect (OIDC) for secure, credential-free publishing to PyPI. No API tokens are required!
+
+**For Maintainers:**
+- Releases are automatically published to PyPI when you create a GitHub release
+- The workflow uses GitHub's OIDC integration with PyPI
+- No manual intervention or API credentials needed
+
+**To create a release:**
+1. Update the version in `pyproject.toml`
+2. Create and push a git tag: `git tag v1.0.1 && git push origin v1.0.1`
+3. Create a GitHub release for the tag
+4. PyPI package is automatically published via GitHub Actions
 
 ## Configuration
 
-Create a `.env` file in the root directory with your API credentials:
+Create a `.env` file in your project directory with your API credentials:
 
 ```env
 # X (Twitter) API
@@ -65,28 +91,28 @@ LINKEDIN_PROFILE_URN=your_linkedin_profile_urn
 ### Basic Publishing
 
 ```python
-from publisher import Publisher
+from publish_socials import Publisher
 
 # Initialize publisher
 publisher = Publisher()
 
-# Create article
-article = {
-    "title": "Your Article Title",
-    "content": "Your article content in markdown",
+# Create content
+content = {
+    "title": "Your Post Title",
+    "content": "Your content in markdown",
     "tags": ["technology", "programming"],
     "publish_date": "2024-01-01"
 }
 
 # Publish to all platforms
-publisher.publish_to_all(article)
+publisher.publish_to_all(content)
 
 # Publish to specific platforms
-publisher.publish_to_x(article)
-publisher.publish_to_reddit(article, subreddit="programming")
-publisher.publish_to_medium(article)
-publisher.publish_to_substack(article)
-publisher.publish_to_linkedin(article)
+publisher.publish_to_x(content)
+publisher.publish_to_reddit(content, subreddit="programming")
+publisher.publish_to_medium(content)
+publisher.publish_to_substack(content)
+publisher.publish_to_linkedin(content)
 ```
 
 ### Using Templates
@@ -101,20 +127,20 @@ template = """
 Tags: {tags}
 """
 
-article = {
-    "title": "Your Article Title",
-    "content": "Your article content",
+content = {
+    "title": "Your Post Title",
+    "content": "Your content",
     "tags": ["technology", "programming"]
 }
 
-publisher.publish_with_template(article, template)
+publisher.publish_with_template(content, template)
 ```
 
 ## API Documentation
 
 ### X (Twitter)
 
-Publish articles and threads to X.
+Publish tweets and threads to X.
 
 **Configuration Required:**
 - X_API_KEY
@@ -124,12 +150,12 @@ Publish articles and threads to X.
 
 **Usage:**
 ```python
-publisher.publish_to_x(article)
+publisher.publish_to_x(content)
 ```
 
 ### Reddit
 
-Post articles to specific subreddits with proper formatting.
+Post content to specific subreddits with proper formatting.
 
 **Configuration Required:**
 - REDDIT_CLIENT_ID
@@ -140,7 +166,7 @@ Post articles to specific subreddits with proper formatting.
 
 **Usage:**
 ```python
-publisher.publish_to_reddit(article, subreddit="programming")
+publisher.publish_to_reddit(content, subreddit="programming")
 ```
 
 ### Medium
@@ -153,7 +179,7 @@ Publish articles with metadata and tags.
 
 **Usage:**
 ```python
-publisher.publish_to_medium(article)
+publisher.publish_to_medium(content)
 ```
 
 ### Substack
@@ -167,12 +193,12 @@ Create and publish newsletters.
 
 **Usage:**
 ```python
-publisher.publish_to_substack(article)
+publisher.publish_to_substack(content)
 ```
 
 ### LinkedIn
 
-Share articles on professional network.
+Share posts on professional network.
 
 **Configuration Required:**
 - LINKEDIN_ACCESS_TOKEN
@@ -180,7 +206,7 @@ Share articles on professional network.
 
 **Usage:**
 ```python
-publisher.publish_to_linkedin(article)
+publisher.publish_to_linkedin(content)
 ```
 
 ## Error Handling
@@ -208,7 +234,14 @@ To add support for a new platform:
 Run tests to ensure all platforms work correctly:
 
 ```bash
-python -m pytest tests/
+# Run all tests
+pytest
+
+# Run tests with coverage
+pytest --cov=publish_socials --cov-report=html
+
+# Run specific test file
+pytest tests/test_config.py
 ```
 
 ## Contributing
@@ -221,7 +254,7 @@ python -m pytest tests/
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
@@ -229,6 +262,11 @@ For issues and questions:
 - Create an issue on GitHub
 - Check the documentation
 - Review the API documentation for each platform
+- Join our discussions
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## Disclaimer
 
@@ -237,3 +275,12 @@ This tool is for educational and personal use. Users are responsible for:
 - Respecting content ownership and copyright
 - Following platform-specific posting guidelines
 - Managing API rate limits appropriately
+- Ensuring content quality and appropriateness
+
+## Version History
+
+- **1.0.0** - Initial release with support for X, Reddit, Medium, Substack, and LinkedIn
+
+## Changelog
+
+See [GitHub Releases](https://github.com/299-Labs/Publish-Socials/releases) for detailed changelog.

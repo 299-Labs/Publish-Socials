@@ -266,10 +266,10 @@ def main():
         else:
             print(f"✗ {platform}: {result['error']}")
     
-    # Example article
-    article = {
-        "title": "My First Article",
-        "content": "This is the content of my article in markdown format.",
+    # Example content
+    content = {
+        "title": "My First Post",
+        "content": "This is the content of my post in markdown format.",
         "tags": ["technology", "programming", "python"],
         "publish_date": "2024-01-01",
         "author": "Your Name"
@@ -277,7 +277,7 @@ def main():
     
     # Publish to all platforms
     print("\nPublishing to all platforms...")
-    results = publisher.publish_to_all(article)
+    results = publisher.publish_to_all(content)
     
     for platform, result in results.items():
         if result['success']:
