@@ -1,5 +1,12 @@
 # Publish-Socials
 
+[![PyPI version](https://badge.fury.io/py/publish-socials.svg)](https://badge.fury.io/py/publish-socials)
+[![Python Version](https://img.shields.io/pypi/pyversions/publish-socials.svg)](https://pypi.org/project/publish-socials/)
+[![License](https://img.shields.io/pypi/l/publish-socials.svg)](https://pypi.org/project/publish-socials/)
+[![Downloads](https://img.shields.io/pypi/dm/publish-socials.svg)](https://pypistats.org/packages/publish-socials)
+[![CI/CD](https://github.com/299-Labs/Publish-Socials/actions/workflows/ci.yml/badge.svg)](https://github.com/299-Labs/Publish-Socials/actions)
+[![Code Coverage](https://codecov.io/gh/299-Labs/Publish-Socials/branch/main/graph/badge.svg)](https://codecov.io/gh/299-Labs/Publish-Socials)
+
 A multi-platform social media publishing tool that allows you to publish content across X (Twitter), Reddit, Medium, Substack, and LinkedIn from a single interface.
 
 ## Features

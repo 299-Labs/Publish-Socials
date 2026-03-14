@@ -1,6 +1,6 @@
-# Contributing to Publisher
+# Contributing to Publish-Socials
 
-Thank you for considering contributing to Publisher! We welcome contributions from everyone.
+Thank you for considering contributing to Publish-Socials! We welcome contributions from everyone.
 
 ## Table of Contents
 
@@ -109,16 +109,16 @@ We follow PEP 8 and use several tools to maintain code quality:
 
 ```bash
 # Format code with Black
-black publish_socials/ tests/
+black tests/
 
 # Sort imports with isort
-isort publish_socials/ tests/
+isort tests/
 
 # Lint with flake8
-flake8 publish_socials/ tests/
+flake8 tests/
 
 # Type checking with mypy
-mypy publish_socials/
+mypy ./
 ```
 
 ### Pre-commit Hooks
@@ -293,4 +293,4 @@ If you have questions about contributing, please:
 - Join our discussions
 - Check the documentation
 
-Thank you for contributing to Publisher! 🎉
+Thank you for contributing to Publish-Socials! 🎉

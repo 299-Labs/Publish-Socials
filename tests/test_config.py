@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from config import Config
+from publish_socials_package.config import Config
 
 
 class TestConfig(unittest.TestCase):

@@ -58,13 +58,13 @@ Issues = "https://github.com/299-Labs/Publish-Socials/issues"
 Changelog = "https://github.com/299-Labs/Publish-Socials/releases"
 
 [project.scripts]
-publish-socials = "publish_socials.__main__:main"
+publish-socials = "publish_socials_package.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["publish_socials*"]
+include = ["publish_socials_package*"]
 
 [tool.setuptools.package-data]
-publish_socials = ["*.md", "*.txt"]
+publish_socials_package = ["*.md", "*.txt"]
 
 [tool.black]
 line-length = 88
@@ -114,7 +114,7 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ["publish_socials"]
+source = ["publish_socials_package"]
 omit = [
     "*/tests/*",
     "*/test_*",

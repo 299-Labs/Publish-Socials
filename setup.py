@@ -15,19 +15,26 @@ def read_readme():
 
 # Read requirements file
 def read_requirements():
-    with open("requirements.txt", "r", encoding="utf-8") as fh:
-        return [
-            line.strip() for line in fh if line.strip() and not line.startswith("#")
-        ]
+    try:
+        with open("requirements.txt", "r", encoding="utf-8") as fh:
+            return [
+                line.strip() for line in fh if line.strip() and not line.startswith("#")
+            ]
+    except FileNotFoundError:
+        # Return empty list if requirements.txt doesn't exist
+        return []
 
 
 # Get version from pyproject.toml
 def get_version():
-    import toml
-
-    with open("pyproject.toml", "r") as f:
-        pyproject = toml.load(f)
-    return pyproject["project"]["version"]
+    try:
+        import toml
+        with open("pyproject.toml", "r") as f:
+            pyproject = toml.load(f)
+        return pyproject["project"]["version"]
+    except ImportError:
+        # Fallback to hardcoded version if toml is not available
+        return "1.0.0"
 
 
 setup(

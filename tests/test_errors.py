@@ -4,7 +4,7 @@ Tests for error handling.
 
 import unittest
 
-from errors import (
+from publish_socials_package.errors import (
     APIError,
     AuthenticationError,
     ConfigurationError,
@@ -196,7 +196,7 @@ class TestHandlePublishingErrorDecorator(unittest.TestCase):
 
     def test_handle_publishing_error_no_exception(self):
         """Test decorator with function that doesn't raise exception."""
-        from errors import handle_publishing_error
+        from publish_socials_package.errors import handle_publishing_error
 
         @handle_publishing_error
         def test_function():
@@ -207,7 +207,7 @@ class TestHandlePublishingErrorDecorator(unittest.TestCase):
 
     def test_handle_publishing_error_publishing_error(self):
         """Test decorator with function that raises PublishingError."""
-        from errors import PublishingError, handle_publishing_error
+        from publish_socials_package.errors import PublishingError, handle_publishing_error
 
         @handle_publishing_error
         def test_function():
@@ -220,7 +220,7 @@ class TestHandlePublishingErrorDecorator(unittest.TestCase):
 
     def test_handle_publishing_error_generic_exception(self):
         """Test decorator with function that raises generic exception."""
-        from errors import handle_publishing_error
+        from publish_socials_package.errors import handle_publishing_error
 
         @handle_publishing_error
         def test_function():

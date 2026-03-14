@@ -5,9 +5,9 @@ Tests for the main Publisher class.
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
-from config import Config
-from errors import ConfigurationError, PublishingError
-from publish_socials import Publisher
+from publish_socials_package.config import Config
+from publish_socials_package.errors import ConfigurationError, PublishingError
+from publish_socials_package.publish_socials import Publisher
 
 
 class TestPublisher(unittest.TestCase):

@@ -6,16 +6,16 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 # Import configuration and utilities
-from config import Config
-from errors import ConfigurationError, PublishingError
-from platforms.linkedin_publisher import LinkedInPublisher
-from platforms.medium_publisher import MediumPublisher
-from platforms.reddit_publisher import RedditPublisher
-from platforms.substack_publisher import SubstackPublisher
+from .config import Config
+from .errors import ConfigurationError, PublishingError
+from .platforms.linkedin_publisher import LinkedInPublisher
+from .platforms.medium_publisher import MediumPublisher
+from .platforms.reddit_publisher import RedditPublisher
+from .platforms.substack_publisher import SubstackPublisher
 
 # Import platform-specific modules
-from platforms.x_publisher import XPublisher
-from utils import ContentFormatter, validate_article
+from .platforms.x_publisher import XPublisher
+from .utils import ContentFormatter, validate_article
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

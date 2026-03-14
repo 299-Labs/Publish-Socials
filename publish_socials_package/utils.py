@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import markdown
-from errors import ContentTooLongError, MissingRequiredFieldError, ValidationError
+from .errors import ContentTooLongError, MissingRequiredFieldError, ValidationError
 
 
 class ContentFormatter:
