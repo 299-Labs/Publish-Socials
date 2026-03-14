@@ -207,7 +207,10 @@ class TestHandlePublishingErrorDecorator(unittest.TestCase):
 
     def test_handle_publishing_error_publishing_error(self):
         """Test decorator with function that raises PublishingError."""
-        from publish_socials_package.errors import PublishingError, handle_publishing_error
+        from publish_socials_package.errors import (
+            PublishingError,
+            handle_publishing_error,
+        )
 
         @handle_publishing_error
         def test_function():

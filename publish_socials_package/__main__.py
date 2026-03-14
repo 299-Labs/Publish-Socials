@@ -20,44 +20,24 @@ def main():
         "--config",
         "-c",
         help="Path to configuration file (default: .env)",
-        default=".env"
+        default=".env",
     )
     parser.add_argument(
         "--platform",
         "-p",
         help="Specific platform to publish to (x, reddit, medium, substack, linkedin)",
-        choices=["x", "reddit", "medium", "substack", "linkedin"]
+        choices=["x", "reddit", "medium", "substack", "linkedin"],
     )
+    parser.add_argument("--title", "-t", help="Title of the content")
     parser.add_argument(
-        "--title",
-        "-t",
-        help="Title of the content"
+        "--content", "-C", help="Content to publish (supports markdown)"
     )
+    parser.add_argument("--tags", "-g", help="Comma-separated tags")
+    parser.add_argument("--subreddit", "-s", help="Subreddit for Reddit posts")
     parser.add_argument(
-        "--content",
-        "-C",
-        help="Content to publish (supports markdown)"
+        "--test", "-T", action="store_true", help="Test connections to all platforms"
     )
-    parser.add_argument(
-        "--tags",
-        "-g",
-        help="Comma-separated tags"
-    )
-    parser.add_argument(
-        "--subreddit",
-        "-s",
-        help="Subreddit for Reddit posts"
-    )
-    parser.add_argument(
-        "--test",
-        "-T",
-        action="store_true",
-        help="Test connections to all platforms"
-    )
-    parser.add_argument(
-        "--template",
-        help="Path to markdown template file"
-    )
+    parser.add_argument("--template", help="Path to markdown template file")
 
     args = parser.parse_args()
 
@@ -75,7 +55,9 @@ def main():
             results = publisher.test_all_connections()
             for platform, status in results.items():
                 status_text = "✓" if status else "✗"
-                print(f"{status_text} {platform}: {'Connected' if status else 'Failed'}")
+                print(
+                    f"{status_text} {platform}: {'Connected' if status else 'Failed'}"
+                )
             return
 
         # Validate required arguments
@@ -88,7 +70,7 @@ def main():
             "title": args.title or "",
             "content": args.content or "",
             "tags": args.tags.split(",") if args.tags else [],
-            "publish_date": None
+            "publish_date": None,
         }
 
         if args.platform:
@@ -102,7 +84,7 @@ def main():
         else:
             # Publish to all platforms
             if args.template:
-                with open(args.template, 'r') as f:
+                with open(args.template, "r") as f:
                     template = f.read()
                 publisher.publish_with_template(content, template)
             else:

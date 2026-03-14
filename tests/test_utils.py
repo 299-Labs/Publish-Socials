@@ -5,8 +5,17 @@ Tests for utility functions.
 import unittest
 from unittest.mock import patch
 
-from publish_socials_package.errors import ContentTooLongError, MissingRequiredFieldError, ValidationError
-from publish_socials_package.utils import ContentFormatter, generate_slug, sanitize_filename, validate_article
+from publish_socials_package.errors import (
+    ContentTooLongError,
+    MissingRequiredFieldError,
+    ValidationError,
+)
+from publish_socials_package.utils import (
+    ContentFormatter,
+    generate_slug,
+    sanitize_filename,
+    validate_article,
+)
 
 
 class TestContentFormatter(unittest.TestCase):

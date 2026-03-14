@@ -64,10 +64,10 @@ class TestConfig(unittest.TestCase):
         with patch.dict(
             os.environ,
             {
-                "X_API_KEY": "test_key",
-                "X_API_SECRET": "test_secret",
-                "X_ACCESS_TOKEN": "test_token",
-                "X_ACCESS_SECRET": "test_secret",
+                "X_API_KEY": "test_key_value",
+                "X_API_SECRET": "test_secret_value",
+                "X_ACCESS_TOKEN": "test_token_value",
+                "X_ACCESS_SECRET": "test_secret_value",
             },
         ):
             config = Config()
@@ -108,10 +108,10 @@ class TestConfig(unittest.TestCase):
         with patch.dict(
             os.environ,
             {
-                "X_API_KEY": "test_key",
-                "X_API_SECRET": "test_secret",
-                "X_ACCESS_TOKEN": "test_token",
-                "X_ACCESS_SECRET": "test_secret",
+                "X_API_KEY": "test_key_value",
+                "X_API_SECRET": "test_secret_value",
+                "X_ACCESS_TOKEN": "test_token_value",
+                "X_ACCESS_SECRET": "test_secret_value",
             },
         ):
             config = Config()

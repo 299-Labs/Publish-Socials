@@ -29,6 +29,7 @@ def read_requirements():
 def get_version():
     try:
         import toml
+
         with open("pyproject.toml", "r") as f:
             pyproject = toml.load(f)
         return pyproject["project"]["version"]
