@@ -10,7 +10,7 @@ python-dotenv>=1.0.0
 markdown>=3.5.0
 
 # Reddit API (optional - only install if using Reddit)
-# praw>=7.7.0
+praw>=7.7.0
 
 # Development and testing dependencies (optional)
 pytest>=7.4.0
