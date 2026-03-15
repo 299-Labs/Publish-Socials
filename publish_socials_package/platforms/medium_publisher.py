@@ -6,6 +6,7 @@ import logging
 from typing import Any, Dict, Optional
 
 import requests
+
 from ..errors import APIError, AuthenticationError, PublishingError
 from ..utils import ContentFormatter
 

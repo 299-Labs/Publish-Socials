@@ -7,8 +7,9 @@ This module provides the main entry point for the publish-socials command.
 
 import argparse
 import sys
-from .publish_socials import Publisher
+
 from .config import Config
+from .publish_socials import Publisher
 
 
 def main():
