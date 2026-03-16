@@ -4,73 +4,90 @@ from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 
+from .errors import ConfigurationError
+
 
 class Config:
     """
     Configuration management for the Publisher application.
-    Handles loading and validation of API credentials and settings.
+    Handles loading and validation of API credentials and settings with secure testing support.
     """
 
-    def __init__(self, config_path: Optional[str] = None):
+    # Default values for non-critical settings
+    DEFAULTS = {
+        "app": {
+            "rate_limit_delay": 1,
+            "max_retries": 3,
+            "timeout": 30,
+            "debug": False,
+        }
+    }
+
+    # Required fields for each platform
+    REQUIRED_FIELDS = {
+        "x": ["api_key", "api_secret", "access_token", "access_secret"],
+        "reddit": ["client_id", "client_secret", "user_agent", "username", "password"],
+        "medium": ["api_token", "user_id"],
+        "substack": ["email", "password", "domain"],
+        "linkedin": ["access_token", "profile_urn"],
+    }
+
+    def __init__(self, env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None):
         """
-        Initialize configuration.
+        Initialize configuration with optional environment file and overrides.
 
         Args:
-            config_path (str, optional): Path to .env file
+            env_file (str, optional): Path to .env file
+            overrides (dict, optional): Dictionary of configuration overrides for testing
         """
-        if config_path:
-            load_dotenv(config_path)
+        self.overrides = overrides or {}
+        
+        # Load environment variables
+        if env_file:
+            load_dotenv(env_file)
         else:
             load_dotenv()  # Load from default .env file
 
         self._config = self._load_config()
 
     def _load_config(self) -> Dict[str, Any]:
-        """Load configuration from environment variables."""
-        config = {
-            # X (Twitter) Configuration
-            "x": {
-                "api_key": os.getenv("X_API_KEY"),
-                "api_secret": os.getenv("X_API_SECRET"),
-                "access_token": os.getenv("X_ACCESS_TOKEN"),
-                "access_secret": os.getenv("X_ACCESS_SECRET"),
-                "bearer_token": os.getenv("X_BEARER_TOKEN"),
-            },
-            # Reddit Configuration
-            "reddit": {
-                "client_id": os.getenv("REDDIT_CLIENT_ID"),
-                "client_secret": os.getenv("REDDIT_CLIENT_SECRET"),
-                "user_agent": os.getenv("REDDIT_USER_AGENT"),
-                "username": os.getenv("REDDIT_USERNAME"),
-                "password": os.getenv("REDDIT_PASSWORD"),
-            },
-            # Medium Configuration
-            "medium": {
-                "api_token": os.getenv("MEDIUM_API_TOKEN"),
-                "user_id": os.getenv("MEDIUM_USER_ID"),
-            },
-            # Substack Configuration
-            "substack": {
-                "email": os.getenv("SUBSTACK_EMAIL"),
-                "password": os.getenv("SUBSTACK_PASSWORD"),
-                "domain": os.getenv("SUBSTACK_DOMAIN"),
-            },
-            # LinkedIn Configuration
-            "linkedin": {
-                "access_token": os.getenv("LINKEDIN_ACCESS_TOKEN"),
-                "profile_urn": os.getenv("LINKEDIN_PROFILE_URN"),
-                "client_id": os.getenv("LINKEDIN_CLIENT_ID"),
-                "client_secret": os.getenv("LINKEDIN_CLIENT_SECRET"),
-            },
-            # Application Settings
-            "app": {
-                "rate_limit_delay": int(os.getenv("RATE_LIMIT_DELAY", 1)),
-                "max_retries": int(os.getenv("MAX_RETRIES", 3)),
-                "timeout": int(os.getenv("TIMEOUT", 30)),
-                "debug": os.getenv("DEBUG", "false").lower() == "true",
-            },
-        }
+        """Load configuration from environment variables with fallbacks."""
+        config = {}
+        
+        # Load platform configurations
+        for platform in self.REQUIRED_FIELDS.keys():
+            platform_config = {}
+            for field in self.REQUIRED_FIELDS[platform]:
+                env_key = f"{platform.upper()}_{field.upper()}"
+                value = self.overrides.get(platform, {}).get(field)
+                if value is None:
+                    value = os.getenv(env_key)
+                platform_config[field] = value
+            config[platform] = platform_config
 
+        # Load application settings with defaults
+        app_config = {}
+        for key, default_value in self.DEFAULTS["app"].items():
+            env_key = f"APP_{key.upper()}"
+            value = self.overrides.get("app", {}).get(key)
+            if value is None:
+                env_value = os.getenv(env_key)
+                if env_value is not None:
+                    # Convert string values to appropriate types
+                    if key == "debug":
+                        value = env_value.lower() == "true"
+                    elif key in ["rate_limit_delay", "max_retries", "timeout"]:
+                        try:
+                            value = int(env_value)
+                        except ValueError:
+                            value = default_value
+                    else:
+                        value = env_value
+                else:
+                    value = default_value
+            app_config[key] = value
+        
+        config["app"] = app_config
         return config
 
     def get(self, platform: str, key: str, default: Any = None) -> Any:
@@ -85,7 +102,41 @@ class Config:
         Returns:
             Any: Configuration value
         """
-        return self._config.get(platform, {}).get(key, default)
+        # Check overrides first
+        if platform in self.overrides and key in self.overrides[platform]:
+            value = self.overrides[platform][key]
+            # Convert string values to appropriate types for app settings
+            if platform == "app" and key == "debug" and isinstance(value, str):
+                return value.lower() == "true"
+            elif platform == "app" and key in ["rate_limit_delay", "max_retries", "timeout"] and isinstance(value, str):
+                try:
+                    return int(value)
+                except ValueError:
+                    pass
+            return value
+        
+        # Check loaded configuration
+        value = self._config.get(platform, {}).get(key)
+        if value is not None:
+            return value
+            
+        # Check environment variables directly (for dynamic loading during tests)
+        # Only check if we don't have overrides for this platform
+        if platform not in self.overrides:
+            env_key = f"{platform.upper()}_{key.upper()}"
+            env_value = os.getenv(env_key)
+            if env_value is not None:
+                # Convert string values to appropriate types
+                if platform == "app" and key == "debug":
+                    return env_value.lower() == "true"
+                elif platform == "app" and key in ["rate_limit_delay", "max_retries", "timeout"]:
+                    try:
+                        return int(env_value)
+                    except ValueError:
+                        pass
+                return env_value
+            
+        return default
 
     def get_platform_config(self, platform: str) -> Dict[str, Any]:
         """
@@ -97,7 +148,7 @@ class Config:
         Returns:
             dict: Platform configuration
         """
-        return self._config.get(platform, {})
+        return self._config.get(platform, {}).copy()
 
     def validate_platform_config(self, platform: str) -> bool:
         """
@@ -109,39 +160,43 @@ class Config:
         Returns:
             bool: True if configuration is valid, False otherwise
         """
-        required_fields = self._get_required_fields(platform)
-
+        required_fields = self.REQUIRED_FIELDS.get(platform, [])
+        
         for field in required_fields:
             if not self.get(platform, field):
                 return False
-
+        
         return True
 
-    def _get_required_fields(self, platform: str) -> List[str]:
+    def validate_required_credentials(self, platform: str) -> None:
         """
-        Get list of required configuration fields for a platform.
+        Validate that all required credentials are present for a platform.
+        Raises a descriptive exception if validation fails.
 
         Args:
             platform (str): Platform name
 
-        Returns:
-            list: List of required field names
+        Raises:
+            ConfigurationError: If required credentials are missing
         """
-        required_fields = {
-            "x": ["api_key", "api_secret", "access_token", "access_secret"],
-            "reddit": [
-                "client_id",
-                "client_secret",
-                "user_agent",
-                "username",
-                "password",
-            ],
-            "medium": ["api_token", "user_id"],
-            "substack": ["email", "password", "domain"],
-            "linkedin": ["access_token", "profile_urn"],
-        }
+        if platform not in self.REQUIRED_FIELDS:
+            raise ValueError(f"Unknown platform: {platform}")
 
-        return required_fields.get(platform, [])
+        missing_fields = []
+        required_fields = self.REQUIRED_FIELDS[platform]
+        
+        for field in required_fields:
+            if not self.get(platform, field):
+                missing_fields.append(field)
+
+        if missing_fields:
+            field_list = ", ".join(missing_fields)
+            raise ConfigurationError(
+                f"Missing required configuration for {platform} platform: {field_list}. "
+                f"Please set the following environment variables: "
+                f"{', '.join([f'{platform.upper()}_{field.upper()}' for field in missing_fields])}. "
+                f"See the documentation for instructions on obtaining these credentials."
+            )
 
     def get_all_platforms(self) -> List[str]:
         """
@@ -150,7 +205,7 @@ class Config:
         Returns:
             list: List of platform names
         """
-        return ["x", "reddit", "medium", "substack", "linkedin"]
+        return list(self.REQUIRED_FIELDS.keys())
 
     def is_platform_configured(self, platform: str) -> bool:
         """
@@ -234,10 +289,10 @@ LINKEDIN_CLIENT_ID=your_linkedin_client_id
 LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 
 # Application Settings
-RATE_LIMIT_DELAY=1
-MAX_RETRIES=3
-TIMEOUT=30
-DEBUG=false
+APP_RATE_LIMIT_DELAY=1
+APP_MAX_RETRIES=3
+APP_TIMEOUT=30
+APP_DEBUG=false
 """
 
         with open(file_path, "w") as f:
@@ -247,14 +302,15 @@ DEBUG=false
         print("Please copy this file to .env and fill in your actual API credentials.")
 
 
-def load_config(config_path: Optional[str] = None) -> Config:
+def load_config(env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Config:
     """
     Convenience function to load configuration.
 
     Args:
-        config_path (str, optional): Path to configuration file
+        env_file (str, optional): Path to configuration file
+        overrides (dict, optional): Configuration overrides for testing
 
     Returns:
         Config: Configuration object
     """
-    return Config(config_path)
+    return Config(env_file, overrides)

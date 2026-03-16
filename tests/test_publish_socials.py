@@ -18,11 +18,11 @@ class TestPublisher(unittest.TestCase):
         self.mock_config = Mock(spec=Config)
         self.mock_config.validate_platform_config.return_value = True
 
-    @patch("publisher.XPublisher")
-    @patch("publisher.RedditPublisher")
-    @patch("publisher.MediumPublisher")
-    @patch("publisher.SubstackPublisher")
-    @patch("publisher.LinkedinPublisher")
+    @patch("publish_socials_package.publish_socials.XPublisher")
+    @patch("publish_socials_package.publish_socials.RedditPublisher")
+    @patch("publish_socials_package.publish_socials.MediumPublisher")
+    @patch("publish_socials_package.publish_socials.SubstackPublisher")
+    @patch("publish_socials_package.publish_socials.LinkedInPublisher")
     def test_publisher_initialization(
         self, mock_linkedin, mock_substack, mock_medium, mock_reddit, mock_x
     ):
@@ -73,7 +73,7 @@ class TestPublisher(unittest.TestCase):
         mock_linkedin.publish.return_value = {"success": True, "result": {"id": "l123"}}
 
         # Create publisher with mocked platforms
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium
@@ -96,7 +96,7 @@ class TestPublisher(unittest.TestCase):
 
         # Verify platform methods were called
         mock_x.publish.assert_called_once_with(content)
-        mock_reddit.publish.assert_called_once_with(content)
+        mock_reddit.publish.assert_called_once_with(content, None)
         mock_medium.publish.assert_called_once_with(content)
         mock_substack.publish.assert_called_once_with(content)
         mock_linkedin.publish.assert_called_once_with(content)
@@ -120,7 +120,7 @@ class TestPublisher(unittest.TestCase):
         mock_linkedin.publish.return_value = {"success": True, "result": {"id": "l123"}}
 
         # Create publisher with mocked platforms
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium
@@ -164,7 +164,7 @@ class TestPublisher(unittest.TestCase):
         mock_linkedin.publish.return_value = {"success": True, "result": {"id": "l123"}}
 
         # Create publisher with mocked platforms
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium
@@ -205,7 +205,7 @@ class TestPublisher(unittest.TestCase):
         mock_linkedin.publish.return_value = {"success": True, "result": {"id": "l123"}}
 
         # Create publisher with mocked platforms
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium
@@ -234,7 +234,7 @@ class TestPublisher(unittest.TestCase):
         mock_reddit = Mock()
         mock_reddit.publish.return_value = {"success": True, "result": {"id": "r123"}}
 
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.reddit_publisher = mock_reddit
 
         article = {"title": "Test Article", "content": "Test content"}
@@ -244,13 +244,11 @@ class TestPublisher(unittest.TestCase):
         mock_reddit.publish.assert_called_once_with(article, "programming")
         self.assertEqual(result, {"success": True, "result": {"id": "r123"}})
 
-    @patch("publisher.ContentFormatter")
-    def test_publish_with_template(self, mock_formatter_class):
+    def test_publish_with_template(self):
         """Test publishing with template."""
-        # Mock formatter
+        # Mock formatter instance
         mock_formatter = Mock()
         mock_formatter.apply_template.return_value = "Formatted content"
-        mock_formatter_class.return_value = mock_formatter
 
         # Mock platform publishers
         mock_x = Mock()
@@ -259,7 +257,9 @@ class TestPublisher(unittest.TestCase):
         mock_medium = Mock()
         mock_medium.publish.return_value = {"success": True, "result": {"id": "m123"}}
 
-        publisher = Publisher(self.mock_config)
+        # Create publisher and replace the formatter instance
+        publisher = Publisher(config=self.mock_config)
+        publisher.formatter = mock_formatter
         publisher.x_publisher = mock_x
         publisher.medium_publisher = mock_medium
 
@@ -303,7 +303,7 @@ class TestPublisher(unittest.TestCase):
         mock_linkedin = Mock()
         mock_linkedin.is_connected.return_value = False
 
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium
@@ -342,7 +342,7 @@ class TestPublisher(unittest.TestCase):
             "user": "linkedinuser",
         }
 
-        publisher = Publisher(self.mock_config)
+        publisher = Publisher(config=self.mock_config)
         publisher.x_publisher = mock_x
         publisher.reddit_publisher = mock_reddit
         publisher.medium_publisher = mock_medium

@@ -27,14 +27,18 @@ class Publisher:
     Main Publisher class that coordinates publishing across multiple platforms.
     """
 
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config: Optional[Config] = None):
         """
         Initialize the Publisher with configuration.
 
         Args:
-            config_path (str, optional): Path to configuration file
+            config (Config, optional): Configuration object. If None, creates a new Config.
         """
-        self.config = Config(config_path)
+        if config is None:
+            self.config = Config()
+        else:
+            self.config = config
+            
         self.formatter = ContentFormatter()
 
         # Initialize platform publishers
