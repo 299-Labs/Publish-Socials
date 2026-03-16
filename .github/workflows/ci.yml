@@ -123,6 +123,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
     
+    permissions:
+      id-token: write  # Mandatory for PyPI OIDC
+      contents: read   # Mandatory for checkout
+      
     steps:
     - name: Download all build artifacts
       uses: actions/download-artifact@v4
@@ -134,6 +138,4 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       # No password needed - uses OpenID Connect (OIDC) for secure publishing
 
-    permissions:
-      id-token: write  # Mandatory for PyPI OIDC
-      contents: read   # Mandatory for checkout
+    
