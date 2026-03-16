@@ -2,9 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  release:
+    types: [published]
 
 jobs:
   test:
@@ -121,12 +123,14 @@ jobs:
   publish-to-pypi:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: |
+      github.event_name == 'release' && github.event.action == 'published' ||
+      github.event_name == 'workflow_dispatch'
     
     permissions:
       id-token: write  # Mandatory for PyPI OIDC
       contents: read   # Mandatory for checkout
-      
+
     steps:
     - name: Download all build artifacts
       uses: actions/download-artifact@v4
