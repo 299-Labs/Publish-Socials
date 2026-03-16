@@ -45,7 +45,7 @@ __all__ = [
     "generate_slug",
     # Platform publishers
     "XPublisher",
-    "RedditPublisher", 
+    "RedditPublisher",
     "MediumPublisher",
     "SubstackPublisher",
     "LinkedInPublisher",

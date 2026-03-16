@@ -111,17 +111,23 @@ class ContentFormatter:
         # Remove HTML tags for X
         content = html.unescape(content)
         content = re.sub(r"<[^>]+>", "", content)
-        
+
         # Remove markdown formatting for X
-        content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)  # Remove **bold**
-        content = re.sub(r'\*(.*?)\*', r'\1', content)      # Remove *italic*
-        content = re.sub(r'\_\_(.*?)\_\_', r'\1', content)  # Remove __bold__
-        content = re.sub(r'\_(.*?)\_', r'\1', content)      # Remove _italic_
-        content = re.sub(r'\`\`\`(.*?)\`\`\`', r'\1', content, flags=re.DOTALL)  # Remove ```code```
-        content = re.sub(r'\`(.*?)\`', r'\1', content)      # Remove `code`
-        content = re.sub(r'\#\s*(\w+)', r'#\1', content)    # Normalize hashtags
-        content = re.sub(r'\!\[.*?\]\((.*?)\)', r'\1', content)  # Remove images, keep URL
-        content = re.sub(r'\[(.*?)\]\((.*?)\)', r'\1 (\2)', content)  # Convert [text](url) to "text (url)"
+        content = re.sub(r"\*\*(.*?)\*\*", r"\1", content)  # Remove **bold**
+        content = re.sub(r"\*(.*?)\*", r"\1", content)  # Remove *italic*
+        content = re.sub(r"\_\_(.*?)\_\_", r"\1", content)  # Remove __bold__
+        content = re.sub(r"\_(.*?)\_", r"\1", content)  # Remove _italic_
+        content = re.sub(
+            r"\`\`\`(.*?)\`\`\`", r"\1", content, flags=re.DOTALL
+        )  # Remove ```code```
+        content = re.sub(r"\`(.*?)\`", r"\1", content)  # Remove `code`
+        content = re.sub(r"\#\s*(\w+)", r"#\1", content)  # Normalize hashtags
+        content = re.sub(
+            r"\!\[.*?\]\((.*?)\)", r"\1", content
+        )  # Remove images, keep URL
+        content = re.sub(
+            r"\[(.*?)\]\((.*?)\)", r"\1 (\2)", content
+        )  # Convert [text](url) to "text (url)"
 
         # Add title if provided
         if title:
@@ -158,19 +164,25 @@ class ContentFormatter:
         # Remove HTML tags for LinkedIn
         content = html.unescape(content)
         content = re.sub(r"<[^>]+>", "", content)
-        
+
         # Remove markdown formatting for LinkedIn
-        content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)  # Remove **bold**
-        content = re.sub(r'\*(.*?)\*', r'\1', content)      # Remove *italic*
-        content = re.sub(r'\_\_(.*?)\_\_', r'\1', content)  # Remove __bold__
-        content = re.sub(r'\_(.*?)\_', r'\1', content)      # Remove _italic_
-        content = re.sub(r'\`\`\`(.*?)\`\`\`', r'\1', content, flags=re.DOTALL)  # Remove ```code```
-        content = re.sub(r'\`(.*?)\`', r'\1', content)      # Remove `code`
-        content = re.sub(r'\!\[.*?\]\((.*?)\)', r'\1', content)  # Remove images, keep URL
-        content = re.sub(r'\[(.*?)\]\((.*?)\)', r'\1 (\2)', content)  # Convert [text](url) to "text (url)"
-        
+        content = re.sub(r"\*\*(.*?)\*\*", r"\1", content)  # Remove **bold**
+        content = re.sub(r"\*(.*?)\*", r"\1", content)  # Remove *italic*
+        content = re.sub(r"\_\_(.*?)\_\_", r"\1", content)  # Remove __bold__
+        content = re.sub(r"\_(.*?)\_", r"\1", content)  # Remove _italic_
+        content = re.sub(
+            r"\`\`\`(.*?)\`\`\`", r"\1", content, flags=re.DOTALL
+        )  # Remove ```code```
+        content = re.sub(r"\`(.*?)\`", r"\1", content)  # Remove `code`
+        content = re.sub(
+            r"\!\[.*?\]\((.*?)\)", r"\1", content
+        )  # Remove images, keep URL
+        content = re.sub(
+            r"\[(.*?)\]\((.*?)\)", r"\1 (\2)", content
+        )  # Convert [text](url) to "text (url)"
+
         # Convert markdown headers to plain text
-        content = re.sub(r'^#{1,6}\s*(.*)$', r'\1', content, flags=re.MULTILINE)
+        content = re.sub(r"^#{1,6}\s*(.*)$", r"\1", content, flags=re.MULTILINE)
 
         # Add title if provided
         if title:
@@ -359,11 +371,11 @@ def sanitize_filename(filename: str) -> str:
     # Limit length to 255 characters
     if len(sanitized) > 255:
         # Preserve file extension if possible
-        if '.' in sanitized:
-            name_part, ext_part = sanitized.rsplit('.', 1)
+        if "." in sanitized:
+            name_part, ext_part = sanitized.rsplit(".", 1)
             max_name_length = 255 - len(ext_part) - 1  # -1 for the dot
             if max_name_length > 0:
-                sanitized = name_part[:max_name_length] + '.' + ext_part
+                sanitized = name_part[:max_name_length] + "." + ext_part
             else:
                 sanitized = sanitized[:255]
         else:

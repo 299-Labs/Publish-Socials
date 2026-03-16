@@ -38,7 +38,7 @@ class Publisher:
             self.config = Config()
         else:
             self.config = config
-            
+
         self.formatter = ContentFormatter()
 
         # Initialize platform publishers

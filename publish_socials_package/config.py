@@ -32,7 +32,9 @@ class Config:
         "linkedin": ["access_token", "profile_urn"],
     }
 
-    def __init__(self, env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None
+    ):
         """
         Initialize configuration with optional environment file and overrides.
 
@@ -41,7 +43,7 @@ class Config:
             overrides (dict, optional): Dictionary of configuration overrides for testing
         """
         self.overrides = overrides or {}
-        
+
         # Load environment variables
         if env_file:
             load_dotenv(env_file)
@@ -53,7 +55,7 @@ class Config:
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from environment variables with fallbacks."""
         config = {}
-        
+
         # Load platform configurations
         for platform in self.REQUIRED_FIELDS.keys():
             platform_config = {}
@@ -86,7 +88,7 @@ class Config:
                 else:
                     value = default_value
             app_config[key] = value
-        
+
         config["app"] = app_config
         return config
 
@@ -108,18 +110,22 @@ class Config:
             # Convert string values to appropriate types for app settings
             if platform == "app" and key == "debug" and isinstance(value, str):
                 return value.lower() == "true"
-            elif platform == "app" and key in ["rate_limit_delay", "max_retries", "timeout"] and isinstance(value, str):
+            elif (
+                platform == "app"
+                and key in ["rate_limit_delay", "max_retries", "timeout"]
+                and isinstance(value, str)
+            ):
                 try:
                     return int(value)
                 except ValueError:
                     pass
             return value
-        
+
         # Check loaded configuration
         value = self._config.get(platform, {}).get(key)
         if value is not None:
             return value
-            
+
         # Check environment variables directly (for dynamic loading during tests)
         # Only check if we don't have overrides for this platform
         if platform not in self.overrides:
@@ -129,13 +135,17 @@ class Config:
                 # Convert string values to appropriate types
                 if platform == "app" and key == "debug":
                     return env_value.lower() == "true"
-                elif platform == "app" and key in ["rate_limit_delay", "max_retries", "timeout"]:
+                elif platform == "app" and key in [
+                    "rate_limit_delay",
+                    "max_retries",
+                    "timeout",
+                ]:
                     try:
                         return int(env_value)
                     except ValueError:
                         pass
                 return env_value
-            
+
         return default
 
     def get_platform_config(self, platform: str) -> Dict[str, Any]:
@@ -161,11 +171,11 @@ class Config:
             bool: True if configuration is valid, False otherwise
         """
         required_fields = self.REQUIRED_FIELDS.get(platform, [])
-        
+
         for field in required_fields:
             if not self.get(platform, field):
                 return False
-        
+
         return True
 
     def validate_required_credentials(self, platform: str) -> None:
@@ -184,7 +194,7 @@ class Config:
 
         missing_fields = []
         required_fields = self.REQUIRED_FIELDS[platform]
-        
+
         for field in required_fields:
             if not self.get(platform, field):
                 missing_fields.append(field)
@@ -302,7 +312,9 @@ APP_DEBUG=false
         print("Please copy this file to .env and fill in your actual API credentials.")
 
 
-def load_config(env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Config:
+def load_config(
+    env_file: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None
+) -> Config:
     """
     Convenience function to load configuration.
 

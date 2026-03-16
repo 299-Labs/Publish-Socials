@@ -20,7 +20,9 @@ class TestConfig(unittest.TestCase):
         self.temp_env_file = None
         # Clear any environment variables that might interfere with tests
         for key in list(os.environ.keys()):
-            if key.startswith(('X_', 'REDDIT_', 'MEDIUM_', 'SUBSTACK_', 'LINKEDIN_', 'APP_')):
+            if key.startswith(
+                ("X_", "REDDIT_", "MEDIUM_", "SUBSTACK_", "LINKEDIN_", "APP_")
+            ):
                 del os.environ[key]
 
     def tearDown(self):
@@ -42,11 +44,11 @@ class TestConfig(unittest.TestCase):
             "app": {
                 "debug": True,
                 "max_retries": 5,
-            }
+            },
         }
 
         config = Config(overrides=overrides)
-        
+
         # Test that overrides are used
         self.assertEqual(config.get("x", "api_key"), "test_key")
         self.assertEqual(config.get("x", "api_secret"), "test_secret")
@@ -63,7 +65,7 @@ class TestConfig(unittest.TestCase):
             f.write("APP_DEBUG=true\n")
 
         config = Config(env_file=self.temp_env_file)
-        
+
         # Test that file values are loaded
         self.assertEqual(config.get("x", "api_key"), "test_key_value")
         self.assertEqual(config.get("x", "api_secret"), "test_secret_value")
@@ -75,7 +77,7 @@ class TestConfig(unittest.TestCase):
         with patch.dict(os.environ, {"X_API_KEY": "env_test_key", "APP_DEBUG": "true"}):
             # Create config without loading env file to test dynamic loading
             config = Config()
-            
+
             # Should pick up environment variables
             self.assertEqual(config.get("x", "api_key"), "env_test_key")
             self.assertTrue(config.get("app", "debug"))
@@ -85,7 +87,7 @@ class TestConfig(unittest.TestCase):
         with patch.dict(os.environ, {"X_API_KEY": "env_key", "APP_DEBUG": "true"}):
             overrides = {"x": {"api_key": "override_key"}, "app": {"debug": False}}
             config = Config(overrides=overrides)
-            
+
             # Overrides should take precedence
             self.assertEqual(config.get("x", "api_key"), "override_key")
             self.assertFalse(config.get("app", "debug"))
@@ -95,13 +97,13 @@ class TestConfig(unittest.TestCase):
     def test_get_method_with_default_values(self):
         """Test get method with default values and fallbacks."""
         config = Config()
-        
+
         # Test default values for app settings
         self.assertEqual(config.get("app", "rate_limit_delay"), 1)
         self.assertEqual(config.get("app", "max_retries"), 3)
         self.assertEqual(config.get("app", "timeout"), 30)
         self.assertFalse(config.get("app", "debug"))
-        
+
         # Test default for non-existent platform
         self.assertIsNone(config.get("nonexistent", "key"))
         self.assertEqual(config.get("nonexistent", "key", "default"), "default")
@@ -113,12 +115,12 @@ class TestConfig(unittest.TestCase):
                 "rate_limit_delay": "5",
                 "max_retries": "10",
                 "timeout": "60",
-                "debug": "true"
+                "debug": "true",
             }
         }
-        
+
         config = Config(overrides=overrides)
-        
+
         # Test type conversion
         self.assertEqual(config.get("app", "rate_limit_delay"), 5)
         self.assertEqual(config.get("app", "max_retries"), 10)
@@ -133,7 +135,7 @@ class TestConfig(unittest.TestCase):
                 "api_key": "key",
                 "api_secret": "secret",
                 "access_token": "token",
-                "access_secret": "secret"
+                "access_secret": "secret",
             }
         }
         config = Config(overrides=overrides)
@@ -151,11 +153,11 @@ class TestConfig(unittest.TestCase):
                 "api_key": "key",
                 "api_secret": "secret",
                 "access_token": "token",
-                "access_secret": "secret"
+                "access_secret": "secret",
             }
         }
         config = Config(overrides=overrides)
-        
+
         # Should not raise an exception
         config.validate_required_credentials("x")
 
@@ -163,10 +165,10 @@ class TestConfig(unittest.TestCase):
         """Test credential validation failure with descriptive error."""
         overrides = {"x": {"api_key": "key"}}
         config = Config(overrides=overrides)
-        
+
         with self.assertRaises(ConfigurationError) as context:
             config.validate_required_credentials("x")
-        
+
         error_message = str(context.exception)
         self.assertIn("Missing required configuration for x platform", error_message)
         self.assertIn("api_secret", error_message)
@@ -177,17 +179,17 @@ class TestConfig(unittest.TestCase):
     def test_validate_required_credentials_unknown_platform(self):
         """Test validation with unknown platform."""
         config = Config()
-        
+
         with self.assertRaises(ValueError) as context:
             config.validate_required_credentials("unknown")
-        
+
         self.assertIn("Unknown platform", str(context.exception))
 
     def test_get_all_platforms(self):
         """Test getting all supported platforms."""
         config = Config()
         platforms = config.get_all_platforms()
-        
+
         expected_platforms = ["x", "reddit", "medium", "substack", "linkedin"]
         self.assertEqual(set(platforms), set(expected_platforms))
 
@@ -203,7 +205,7 @@ class TestConfig(unittest.TestCase):
                 "api_key": "key",
                 "api_secret": "secret",
                 "access_token": "token",
-                "access_secret": "secret"
+                "access_secret": "secret",
             }
         }
         config = Config(overrides=overrides)
@@ -212,13 +214,13 @@ class TestConfig(unittest.TestCase):
     def test_get_app_setting(self):
         """Test getting application settings."""
         config = Config()
-        
+
         # Test default values
         self.assertEqual(config.get_app_setting("rate_limit_delay"), 1)
         self.assertEqual(config.get_app_setting("max_retries"), 3)
         self.assertEqual(config.get_app_setting("timeout"), 30)
         self.assertFalse(config.get_app_setting("debug"))
-        
+
         # Test with override
         overrides = {"app": {"debug": True, "max_retries": 10}}
         config = Config(overrides=overrides)
@@ -227,10 +229,7 @@ class TestConfig(unittest.TestCase):
 
     def test_to_dict(self):
         """Test converting configuration to dictionary."""
-        overrides = {
-            "x": {"api_key": "key"},
-            "app": {"debug": True}
-        }
+        overrides = {"x": {"api_key": "key"}, "app": {"debug": True}}
         config = Config(overrides=overrides)
         config_dict = config.to_dict()
 
@@ -243,12 +242,9 @@ class TestConfig(unittest.TestCase):
     def test_save_to_file(self):
         """Test saving configuration to file."""
         temp_file = tempfile.mkstemp(suffix=".json")[1]
-        
+
         try:
-            overrides = {
-                "x": {"api_key": "key"},
-                "app": {"debug": True}
-            }
+            overrides = {"x": {"api_key": "key"}, "app": {"debug": True}}
             config = Config(overrides=overrides)
             config.save_to_file(temp_file)
 
@@ -256,7 +252,7 @@ class TestConfig(unittest.TestCase):
             self.assertTrue(os.path.exists(temp_file))
             with open(temp_file, "r") as f:
                 saved_config = json.load(f)
-            
+
             self.assertEqual(saved_config["x"]["api_key"], "key")
             self.assertTrue(saved_config["app"]["debug"])
         finally:
@@ -299,20 +295,23 @@ class TestConfig(unittest.TestCase):
         """Test the load_config convenience function."""
         overrides = {"x": {"api_key": "test_key"}}
         config = load_config(overrides=overrides)
-        
+
         self.assertIsInstance(config, Config)
         self.assertEqual(config.get("x", "api_key"), "test_key")
 
     def test_environment_variable_type_conversion(self):
         """Test environment variable type conversion during dynamic loading."""
-        with patch.dict(os.environ, {
-            "APP_RATE_LIMIT_DELAY": "5",
-            "APP_MAX_RETRIES": "10", 
-            "APP_TIMEOUT": "60",
-            "APP_DEBUG": "true"
-        }):
+        with patch.dict(
+            os.environ,
+            {
+                "APP_RATE_LIMIT_DELAY": "5",
+                "APP_MAX_RETRIES": "10",
+                "APP_TIMEOUT": "60",
+                "APP_DEBUG": "true",
+            },
+        ):
             config = Config()
-            
+
             # Should convert string environment variables to appropriate types
             self.assertEqual(config.get("app", "rate_limit_delay"), 5)
             self.assertEqual(config.get("app", "max_retries"), 10)
@@ -324,7 +323,7 @@ class TestConfig(unittest.TestCase):
         # Clear any existing environment variables
         with patch.dict(os.environ, {}, clear=True):
             config = Config()
-            
+
             # Should use defaults when environment variables are missing
             self.assertEqual(config.get("app", "rate_limit_delay"), 1)
             self.assertEqual(config.get("app", "max_retries"), 3)
@@ -340,39 +339,31 @@ class TestConfig(unittest.TestCase):
                 "client_secret": "secret",
                 "user_agent": "agent",
                 "username": "user",
-                "password": "pass"
+                "password": "pass",
             }
         }
         config = Config(overrides=reddit_overrides)
         self.assertTrue(config.validate_platform_config("reddit"))
-        
+
         # Test Medium validation
-        medium_overrides = {
-            "medium": {
-                "api_token": "token",
-                "user_id": "user"
-            }
-        }
+        medium_overrides = {"medium": {"api_token": "token", "user_id": "user"}}
         config = Config(overrides=medium_overrides)
         self.assertTrue(config.validate_platform_config("medium"))
-        
+
         # Test Substack validation
         substack_overrides = {
             "substack": {
                 "email": "test@example.com",
                 "password": "pass",
-                "domain": "test.substack.com"
+                "domain": "test.substack.com",
             }
         }
         config = Config(overrides=substack_overrides)
         self.assertTrue(config.validate_platform_config("substack"))
-        
+
         # Test LinkedIn validation
         linkedin_overrides = {
-            "linkedin": {
-                "access_token": "token",
-                "profile_urn": "urn:li:person:test"
-            }
+            "linkedin": {"access_token": "token", "profile_urn": "urn:li:person:test"}
         }
         config = Config(overrides=linkedin_overrides)
         self.assertTrue(config.validate_platform_config("linkedin"))
