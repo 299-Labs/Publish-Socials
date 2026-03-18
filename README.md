@@ -1,3 +1,5 @@
+Edit: [I found a better tool for this](https://zernio.com/)
+
 # Publish-Socials
 
 [![PyPI version](https://badge.fury.io/py/publish-socials.svg)](https://badge.fury.io/py/publish-socials)
